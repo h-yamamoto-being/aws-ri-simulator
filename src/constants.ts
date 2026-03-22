@@ -30,11 +30,11 @@ export const SCENARIO_COLORS = [
   '#EF4444', // red-500
   '#3B82F6', // blue-500
   '#22C55E', // green-500
-  '#F97316', // orange-500
+  '#EAB308', // yellow-500
   '#A855F7', // purple-500
   '#EC4899', // pink-500
   '#14B8A6', // teal-500
-  '#EAB308', // yellow-500
+  '#F97316', // orange-500
 ]
 
 // デフォルト為替レート（12ヶ月分・全シナリオ共通）
