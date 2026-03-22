@@ -1,25 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { Scenario, PlanType, HourlyScenario, PartialUpfrontScenario } from '../types'
-import {
-  PLAN_LABELS,
-  SCENARIO_COLORS,
-  VALIDATION,
-  DEFAULT_HOURLY_RATE,
-  DEFAULT_HOURS_PER_MONTH,
-  DEFAULT_PARTIAL_UPFRONT_FEE,
-  DEFAULT_PARTIAL_MONTHLY_FEE,
-} from '../constants'
+import { ref, computed } from 'vue'
+import type { Scenario, HourlyScenario, PartialUpfrontScenario } from '../types'
+import { PLAN_LABELS, VALIDATION } from '../constants'
 
 const props = defineProps<{
   scenario: Scenario
-  canDelete: boolean
 }>()
 
 const emit = defineEmits<{
   'update:scenario': [scenario: Scenario]
-  delete: []
 }>()
+
+const open = ref(false)
 
 const isHourly = computed(() =>
   props.scenario.planType !== 'riPartialUpfront'
@@ -37,89 +29,36 @@ function updateField(field: string, value: string | number) {
   emit('update:scenario', { ...props.scenario, [field]: value } as Scenario)
 }
 
-function onPlanTypeChange(e: Event) {
-  const newType = (e.target as HTMLSelectElement).value as PlanType
-  const base = {
-    id: props.scenario.id,
-    name: props.scenario.name,
-    color: props.scenario.color,
-  }
 
-  if (newType === 'riPartialUpfront') {
-    emit('update:scenario', {
-      ...base,
-      planType: 'riPartialUpfront',
-      upfrontFee: DEFAULT_PARTIAL_UPFRONT_FEE,
-      monthlyFee: DEFAULT_PARTIAL_MONTHLY_FEE,
-    })
-  } else {
-    const hourlyRate =
-      props.scenario.planType !== 'riPartialUpfront'
-        ? props.scenario.hourlyRate
-        : DEFAULT_HOURLY_RATE
-    const hoursPerMonth =
-      props.scenario.planType !== 'riPartialUpfront'
-        ? props.scenario.hoursPerMonth
-        : DEFAULT_HOURS_PER_MONTH
-    emit('update:scenario', { ...base, planType: newType, hourlyRate, hoursPerMonth })
-  }
-}
 </script>
 
 <template>
   <div
-    class="rounded-xl border-2 bg-white p-4 shadow-sm flex flex-col gap-3"
+    class="min-w-0 rounded-xl border-2 bg-white shadow-sm"
     :style="{ borderColor: scenario.color }"
   >
-    <!-- ヘッダー行：名前・色・削除 -->
-    <div class="flex items-center gap-2">
-      <!-- カラーピッカー -->
-      <div class="flex gap-1">
-        <button
-          v-for="c in SCENARIO_COLORS"
-          :key="c"
-          type="button"
-          class="h-4 w-4 rounded-full border-2 transition-transform hover:scale-110"
-          :style="{ backgroundColor: c, borderColor: scenario.color === c ? '#374151' : 'transparent' }"
-          @click="updateField('color', c)"
+    <!-- アコーディオンヘッダー -->
+    <button
+      type="button"
+      class="flex w-full items-center justify-between px-4 py-3 text-left"
+      @click="open = !open"
+    >
+      <div class="flex items-center gap-2 min-w-0">
+        <span
+          class="h-3 w-3 shrink-0 rounded-full"
+          :style="{ backgroundColor: scenario.color }"
         />
+        <span class="truncate text-sm font-semibold text-gray-800">
+          {{ PLAN_LABELS[scenario.planType] }}
+        </span>
       </div>
-      <!-- シナリオ名 -->
-      <input
-        type="text"
-        :value="scenario.name"
-        maxlength="20"
-        class="flex-1 rounded border border-gray-300 px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-400"
-        @input="updateField('name', ($event.target as HTMLInputElement).value)"
-      />
-      <!-- 削除ボタン -->
-      <button
-        type="button"
-        :disabled="!canDelete"
-        class="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
-        @click="$emit('delete')"
-      >
-        削除
-      </button>
-    </div>
+      <span class="ml-2 shrink-0 text-xs text-gray-400">{{ open ? '▼' : '▶' }}</span>
+    </button>
 
-    <!-- プランタイプ -->
-    <div>
-      <label class="mb-1 block text-xs text-gray-500">プランタイプ</label>
-      <select
-        :value="scenario.planType"
-        class="w-full rounded border border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-        @change="onPlanTypeChange"
-      >
-        <option v-for="(label, key) in PLAN_LABELS" :key="key" :value="key">
-          {{ label }}
-        </option>
-      </select>
-    </div>
-
-    <!-- オンデマンド・RI前払いなし・RI全額前払い用フィールド -->
-    <template v-if="hourlyScenario">
-      <div class="grid grid-cols-2 gap-3">
+    <!-- アコーディオン本体：設定値フィールド -->
+    <div v-if="open" class="border-t border-gray-100 px-4 pb-4 pt-3 flex flex-col gap-3">
+      <!-- オンデマンド・RI前払いなし・RI全額前払い用フィールド -->
+      <template v-if="hourlyScenario">
         <div>
           <label class="mb-1 block text-xs text-gray-500">時間単価（USD/hour）</label>
           <input
@@ -144,12 +83,10 @@ function onPlanTypeChange(e: Event) {
             @change="updateField('hoursPerMonth', parseFloat(($event.target as HTMLInputElement).value))"
           />
         </div>
-      </div>
-    </template>
+      </template>
 
-    <!-- RI一部前払い用フィールド -->
-    <template v-else-if="partialScenario">
-      <div class="grid grid-cols-2 gap-3">
+      <!-- RI一部前払い用フィールド -->
+      <template v-else-if="partialScenario">
         <div>
           <label class="mb-1 block text-xs text-gray-500">RI の前払い料金（USD）</label>
           <input
@@ -172,7 +109,7 @@ function onPlanTypeChange(e: Event) {
             @change="updateField('monthlyFee', parseFloat(($event.target as HTMLInputElement).value))"
           />
         </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 </template>

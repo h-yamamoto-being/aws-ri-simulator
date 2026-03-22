@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import type { Scenario, ScenarioResult } from '../types'
 import { DEFAULT_SCENARIOS, DEFAULT_RATES } from '../constants'
 import { calcScenarioResult } from '../utils/calculator'
-import { addScenario, removeScenario, replaceScenario } from '../utils/scenarioHelpers'
+import { replaceScenario } from '../utils/scenarioHelpers'
 
 export function useSimulator() {
   const scenarios = ref<Scenario[]>([...DEFAULT_SCENARIOS])
@@ -14,14 +14,6 @@ export function useSimulator() {
     scenarios.value.map(s => calcScenarioResult(s, rates.value))
   )
 
-  function add() {
-    scenarios.value = addScenario(scenarios.value)
-  }
-
-  function remove(id: string) {
-    scenarios.value = removeScenario(scenarios.value, id)
-  }
-
   function update(updated: Scenario) {
     scenarios.value = replaceScenario(scenarios.value, updated)
   }
@@ -30,5 +22,5 @@ export function useSimulator() {
     rates.value = newRates
   }
 
-  return { scenarios, rates, results, add, remove, update, updateRates }
+  return { scenarios, rates, results, update, updateRates }
 }
