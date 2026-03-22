@@ -3,7 +3,6 @@ import {
   SCENARIO_COLORS,
   DEFAULT_HOURLY_RATE,
   DEFAULT_HOURS_PER_MONTH,
-  DEFAULT_EXCHANGE_RATE,
   VALIDATION,
 } from '../constants'
 
@@ -21,7 +20,6 @@ export function createScenario(existing: Scenario[]): Scenario {
     planType: 'onDemand',
     hourlyRate: DEFAULT_HOURLY_RATE,
     hoursPerMonth: DEFAULT_HOURS_PER_MONTH,
-    exchangeRates: Array(12).fill(DEFAULT_EXCHANGE_RATE) as number[],
   }
 }
 

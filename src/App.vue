@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useSimulator } from './composables/useSimulator'
+import ExchangeRateInput from './components/ExchangeRateInput.vue'
 import ScenarioList from './components/ScenarioList.vue'
 import ResultSummary from './components/ResultSummary.vue'
 import ResultChart from './components/ResultChart.vue'
 import ResultTable from './components/ResultTable.vue'
 import BreakEvenNote from './components/BreakEvenNote.vue'
 
-const { scenarios, results, add, remove, update } = useSimulator()
+const { scenarios, rates, results, add, remove, update, updateRates } = useSimulator()
 </script>
 
 <template>
@@ -25,6 +26,12 @@ const { scenarios, results, add, remove, update } = useSimulator()
 
     <!-- メインコンテンツ -->
     <main class="mx-auto max-w-screen-xl space-y-8 px-4 py-6">
+      <!-- 為替レート（全シナリオ共通） -->
+      <section class="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+        <h2 class="mb-1 text-base font-semibold text-gray-700">為替レート（全シナリオ共通）</h2>
+        <ExchangeRateInput :rates="rates" @update:rates="updateRates" />
+      </section>
+
       <!-- シナリオ一覧 -->
       <ScenarioList
         :scenarios="scenarios"

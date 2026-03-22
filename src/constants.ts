@@ -37,8 +37,8 @@ export const SCENARIO_COLORS = [
   '#EAB308', // yellow-500
 ]
 
-// デフォルト為替レート（12ヶ月分）
-const defaultRates = () => Array(12).fill(DEFAULT_EXCHANGE_RATE) as number[]
+// デフォルト為替レート（12ヶ月分・全シナリオ共通）
+export const DEFAULT_RATES: number[] = Array(12).fill(DEFAULT_EXCHANGE_RATE)
 
 // 初期表示シナリオ（4プラン）
 export const DEFAULT_SCENARIOS: Scenario[] = [
@@ -49,7 +49,6 @@ export const DEFAULT_SCENARIOS: Scenario[] = [
     planType: 'onDemand',
     hourlyRate: DEFAULT_HOURLY_RATE,
     hoursPerMonth: DEFAULT_HOURS_PER_MONTH,
-    exchangeRates: defaultRates(),
   },
   {
     id: '2',
@@ -58,7 +57,6 @@ export const DEFAULT_SCENARIOS: Scenario[] = [
     planType: 'riNoUpfront',
     hourlyRate: DEFAULT_HOURLY_RATE,
     hoursPerMonth: DEFAULT_HOURS_PER_MONTH,
-    exchangeRates: defaultRates(),
   },
   {
     id: '3',
@@ -67,7 +65,6 @@ export const DEFAULT_SCENARIOS: Scenario[] = [
     planType: 'riPartialUpfront',
     upfrontFee: DEFAULT_PARTIAL_UPFRONT_FEE,
     monthlyFee: DEFAULT_PARTIAL_MONTHLY_FEE,
-    exchangeRates: defaultRates(),
   },
   {
     id: '4',
@@ -76,6 +73,5 @@ export const DEFAULT_SCENARIOS: Scenario[] = [
     planType: 'riFullUpfront',
     hourlyRate: DEFAULT_HOURLY_RATE,
     hoursPerMonth: DEFAULT_HOURS_PER_MONTH,
-    exchangeRates: defaultRates(),
   },
 ]
