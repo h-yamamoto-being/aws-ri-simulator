@@ -7,7 +7,7 @@ import ResultChart from './components/ResultChart.vue'
 import ResultTable from './components/ResultTable.vue'
 import BreakEvenNote from './components/BreakEvenNote.vue'
 
-const { scenarios, rates, results, add, remove, update, updateRates } = useSimulator()
+const { scenarios, rates, results, update, updateRates } = useSimulator()
 </script>
 
 <template>
@@ -35,8 +35,6 @@ const { scenarios, rates, results, add, remove, update, updateRates } = useSimul
       <!-- シナリオ一覧 -->
       <ScenarioList
         :scenarios="scenarios"
-        @add="add"
-        @remove="remove"
         @update:scenario="update"
       />
 
