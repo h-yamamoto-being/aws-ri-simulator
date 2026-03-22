@@ -1,17 +1,17 @@
 import { ref, computed } from 'vue'
 import type { Scenario, ScenarioResult } from '../types'
-import { DEFAULT_SCENARIOS } from '../constants'
+import { DEFAULT_SCENARIOS, DEFAULT_RATES } from '../constants'
 import { calcScenarioResult } from '../utils/calculator'
 import { addScenario, removeScenario, replaceScenario } from '../utils/scenarioHelpers'
 
 export function useSimulator() {
-  // DEFAULT_SCENARIOSのexchangeRatesは共有参照を避けるためディープコピー
-  const scenarios = ref<Scenario[]>(
-    DEFAULT_SCENARIOS.map(s => ({ ...s, exchangeRates: [...s.exchangeRates] }))
-  )
+  const scenarios = ref<Scenario[]>([...DEFAULT_SCENARIOS])
+
+  // 全シナリオ共通の為替レート（12ヶ月分）
+  const rates = ref<number[]>([...DEFAULT_RATES])
 
   const results = computed<ScenarioResult[]>(() =>
-    scenarios.value.map(calcScenarioResult)
+    scenarios.value.map(s => calcScenarioResult(s, rates.value))
   )
 
   function add() {
@@ -26,5 +26,9 @@ export function useSimulator() {
     scenarios.value = replaceScenario(scenarios.value, updated)
   }
 
-  return { scenarios, results, add, remove, update }
+  function updateRates(newRates: number[]) {
+    rates.value = newRates
+  }
+
+  return { scenarios, rates, results, add, remove, update, updateRates }
 }

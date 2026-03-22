@@ -10,7 +10,6 @@ import {
   DEFAULT_PARTIAL_UPFRONT_FEE,
   DEFAULT_PARTIAL_MONTHLY_FEE,
 } from '../constants'
-import ExchangeRateInput from './ExchangeRateInput.vue'
 
 const props = defineProps<{
   scenario: Scenario
@@ -35,11 +34,7 @@ const partialScenario = computed<PartialUpfrontScenario | null>(() =>
 )
 
 function updateField(field: string, value: string | number) {
-  if (isHourly.value) {
-    emit('update:scenario', { ...props.scenario, [field]: value } as Scenario)
-  } else {
-    emit('update:scenario', { ...props.scenario, [field]: value } as Scenario)
-  }
+  emit('update:scenario', { ...props.scenario, [field]: value } as Scenario)
 }
 
 function onPlanTypeChange(e: Event) {
@@ -48,7 +43,6 @@ function onPlanTypeChange(e: Event) {
     id: props.scenario.id,
     name: props.scenario.name,
     color: props.scenario.color,
-    exchangeRates: props.scenario.exchangeRates,
   }
 
   if (newType === 'riPartialUpfront') {
@@ -69,10 +63,6 @@ function onPlanTypeChange(e: Event) {
         : DEFAULT_HOURS_PER_MONTH
     emit('update:scenario', { ...base, planType: newType, hourlyRate, hoursPerMonth })
   }
-}
-
-function onRatesUpdate(rates: number[]) {
-  emit('update:scenario', { ...props.scenario, exchangeRates: rates })
 }
 </script>
 
@@ -184,8 +174,5 @@ function onRatesUpdate(rates: number[]) {
         </div>
       </div>
     </template>
-
-    <!-- 為替レート -->
-    <ExchangeRateInput :rates="scenario.exchangeRates" @update:rates="onRatesUpdate" />
   </div>
 </template>

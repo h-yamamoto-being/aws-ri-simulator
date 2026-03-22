@@ -4,7 +4,6 @@ interface ScenarioBase {
   id: string
   name: string
   color: string
-  exchangeRates: number[] // 12要素（月ごとの円/ドルレート）
 }
 
 export interface HourlyScenario extends ScenarioBase {
